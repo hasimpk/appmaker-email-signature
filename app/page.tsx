@@ -23,11 +23,11 @@ import {
 export default function Home() {
   const [signatureData, setSignatureData] = useState<EmailSignatureData>({
     photoUrl: "",
-    name: "Abhyudaya Adulkar",
+    name: "John Doe",
     role: "VP Sales",
-    phone: "+91 98235 30341",
+    phone: "+91 99966 60606",
     bookingLink: "",
-    linkedinProfile: "linkedin.com/adulkarabhyudaya",
+    linkedinProfile: "linkedin.com/john-doe",
   });
   const [htmlCode, setHtmlCode] = useState("");
   const [copied, setCopied] = useState(false);
