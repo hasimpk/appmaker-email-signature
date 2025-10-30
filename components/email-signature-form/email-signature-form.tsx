@@ -8,6 +8,7 @@ import { Upload, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   Form,
   FormControl,
@@ -31,6 +32,7 @@ import { templates } from "@/lib/templates/registry";
 const emailSignatureSchema = z.object({
   templateId: z.string().optional(),
   photoUrl: z.string().optional(),
+  showPhoto: z.boolean().optional().default(true),
   name: z.string().min(1, "Name is required"),
   role: z.string().min(1, "Role is required"),
   phone: z.string().optional(),
@@ -60,6 +62,7 @@ export function EmailSignatureForm({
     defaultValues: {
       templateId: "default",
       photoUrl: defaultValues?.photoUrl || "",
+      showPhoto: defaultValues?.showPhoto ?? true,
       name: defaultValues?.name || "",
       role: defaultValues?.role || "",
       phone: defaultValues?.phone || "",
@@ -85,6 +88,7 @@ export function EmailSignatureForm({
   const handleSubmit = form.handleSubmit((data) => {
     onSubmit({
       photoUrl: data.photoUrl || "",
+      showPhoto: data.showPhoto ?? true,
       name: data.name,
       role: data.role,
       phone: data.phone,
@@ -106,6 +110,7 @@ export function EmailSignatureForm({
       if (value.name && value.role) {
         stableOnSubmit({
           photoUrl: value.photoUrl || "",
+          showPhoto: value.showPhoto ?? true,
           name: value.name,
           role: value.role,
           phone: value.phone || undefined,
@@ -154,58 +159,74 @@ export function EmailSignatureForm({
               name="photoUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Profile Photo</FormLabel>
-                  <div className="space-y-3">
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant={
-                          photoUploadType === "url" ? "default" : "outline"
-                        }
-                        size="sm"
-                        onClick={() => setPhotoUploadType("url")}
-                      >
-                        <Link2 className="mr-2 h-4 w-4" />
-                        URL
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={
-                          photoUploadType === "file" ? "default" : "outline"
-                        }
-                        size="sm"
-                        onClick={() => setPhotoUploadType("file")}
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload
-                      </Button>
-                    </div>
-                    {photoUploadType === "url" ? (
-                      <FormControl>
-                        <Input
-                          placeholder="https://example.com/photo.jpg"
-                          {...field}
-                        />
-                      </FormControl>
-                    ) : (
-                      <FormControl>
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePhotoFileChange}
-                        />
-                      </FormControl>
-                    )}
-                    {photoPreview && (
-                      <div className="mt-2">
-                        <img
-                          src={photoPreview}
-                          alt="Preview"
-                          className="h-24 w-24 rounded-full object-cover border-2 border-gray-200"
-                        />
-                      </div>
-                    )}
+                  <div className="flex items-center gap-3">
+                    <FormLabel>Profile Photo</FormLabel>
+                    <FormField
+                      control={form.control}
+                      name="showPhoto"
+                      render={({ field: showPhotoField }) => (
+                        <FormControl>
+                          <Switch
+                            checked={showPhotoField.value ?? true}
+                            onCheckedChange={showPhotoField.onChange}
+                          />
+                        </FormControl>
+                      )}
+                    />
                   </div>
+                  {form.watch("showPhoto") !== false && (
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant={
+                            photoUploadType === "url" ? "default" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => setPhotoUploadType("url")}
+                        >
+                          <Link2 className="mr-2 h-4 w-4" />
+                          URL
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={
+                            photoUploadType === "file" ? "default" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => setPhotoUploadType("file")}
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload
+                        </Button>
+                      </div>
+                      {photoUploadType === "url" ? (
+                        <FormControl>
+                          <Input
+                            placeholder="https://example.com/photo.jpg"
+                            {...field}
+                          />
+                        </FormControl>
+                      ) : (
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePhotoFileChange}
+                          />
+                        </FormControl>
+                      )}
+                      {photoPreview && (
+                        <div className="mt-2">
+                          <img
+                            src={photoPreview}
+                            alt="Preview"
+                            className="h-24 w-24 rounded-full object-cover border-2 border-gray-200"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <FormDescription>
                     Upload a photo or provide an image URL
                   </FormDescription>
