@@ -32,10 +32,10 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
               y2="37.7514"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#9EADF4" />
-              <stop offset="0.317308" stop-color="#DF5E94" />
-              <stop offset="0.632212" stop-color="#E5544F" />
-              <stop offset="1" stop-color="#E27936" />
+              <stop stopColor="#9EADF4" />
+              <stop offset="0.317308" stopColor="#DF5E94" />
+              <stop offset="0.632212" stopColor="#E5544F" />
+              <stop offset="1" stopColor="#E27936" />
             </linearGradient>
           </defs>
         </svg>
