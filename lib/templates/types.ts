@@ -1,0 +1,22 @@
+export interface EmailSignatureData {
+  photoUrl: string
+  name: string
+  role: string
+  phone?: string
+  bookingLink?: string
+  linkedinProfile?: string
+}
+
+export interface TemplateMetadata {
+  id: string
+  name: string
+  description: string
+}
+
+export interface EmailSignatureTemplate {
+  id: string
+  metadata: TemplateMetadata
+  render: (data: EmailSignatureData) => React.ReactElement
+  generateHTML: (data: EmailSignatureData) => string
+}
+
