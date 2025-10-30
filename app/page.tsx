@@ -11,6 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { EmailSignatureForm } from "@/components/email-signature-form/email-signature-form";
 import { TemplatePreview } from "@/components/template-preview/template-preview";
 import type { EmailSignatureData } from "@/lib/templates/types";
@@ -31,6 +33,8 @@ export default function Home() {
   });
   const [htmlCode, setHtmlCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const [exportFormat, setExportFormat] = useState<"png" | "jpeg">("png");
+  const [exportScale, setExportScale] = useState<number>(1);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const handleFormSubmit = (data: EmailSignatureData) => {
@@ -66,7 +70,7 @@ export default function Home() {
     }
   };
 
-  const handleExportImage = async (format: "png" | "jpeg") => {
+  const handleExportImage = async () => {
     try {
       if (!previewRef.current) {
         console.error("Preview ref is not available");
@@ -103,7 +107,7 @@ export default function Home() {
         .replace(/\s/g, "-")
         .toLowerCase()}`;
 
-      await exportAsImage(previewElement, format, filename);
+      await exportAsImage(previewElement, exportFormat, filename, exportScale);
     } catch (error) {
       console.error("Error in handleExportImage:", error);
       alert(
@@ -141,22 +145,41 @@ export default function Home() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex gap-2">
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="export-format">Format</Label>
+                    <Select
+                      id="export-format"
+                      value={exportFormat}
+                      onChange={(e) =>
+                        setExportFormat(e.target.value as "png" | "jpeg")
+                      }
+                    >
+                      <option value="png">PNG</option>
+                      <option value="jpeg">JPEG</option>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="export-scale">Size</Label>
+                    <Select
+                      id="export-scale"
+                      value={exportScale.toString()}
+                      onChange={(e) =>
+                        setExportScale(parseFloat(e.target.value))
+                      }
+                    >
+                      <option value="0.5">0.5x</option>
+                      <option value="1">1x (Optimal for Gmail)</option>
+                      <option value="2">2x</option>
+                    </Select>
+                  </div>
                   <Button
                     variant="outline"
-                    className="flex-1"
-                    onClick={() => handleExportImage("png")}
+                    className="w-full"
+                    onClick={handleExportImage}
                   >
                     <Download className="mr-2 h-4 w-4" />
-                    Export PNG
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => handleExportImage("jpeg")}
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Export JPEG
+                    Export Image
                   </Button>
                 </div>
               </CardContent>
