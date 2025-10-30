@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Upload, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
   Form,
@@ -25,9 +24,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Select } from "@/components/ui/select";
 import type { EmailSignatureData } from "@/lib/templates/types";
-import { templates } from "@/lib/templates/registry";
+import { compositeProfilePhoto } from "@/lib/utils/image-composition";
 
 const emailSignatureSchema = z.object({
   templateId: z.string().optional(),
@@ -52,10 +50,12 @@ export function EmailSignatureForm({
   defaultValues,
 }: EmailSignatureFormProps) {
   const [photoUploadType, setPhotoUploadType] = useState<"url" | "file">("url");
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>(
     defaultValues?.photoUrl || ""
   );
+  const [isComposing, setIsComposing] = useState(false);
+  const [compositionError, setCompositionError] = useState<string | null>(null);
+  const urlTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const form = useForm<EmailSignatureFormData>({
     resolver: zodResolver(emailSignatureSchema),
@@ -71,17 +71,47 @@ export function EmailSignatureForm({
     },
   });
 
-  const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
-      setPhotoFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setPhotoPreview(result);
-        form.setValue("photoUrl", result);
-      };
-      reader.readAsDataURL(file);
+      setIsComposing(true);
+      setCompositionError(null);
+
+      try {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          try {
+            const result = reader.result as string;
+            // Create composite image
+            const composite = await compositeProfilePhoto(result);
+            setPhotoPreview(composite);
+            form.setValue("photoUrl", composite);
+          } catch (error) {
+            console.error("Error creating composite:", error);
+            setCompositionError(
+              error instanceof Error
+                ? error.message
+                : "Failed to create composite image"
+            );
+            // Fallback to original image if composition fails
+            const result = reader.result as string;
+            setPhotoPreview(result);
+            form.setValue("photoUrl", result);
+          } finally {
+            setIsComposing(false);
+          }
+        };
+        reader.onerror = () => {
+          setCompositionError("Failed to read file");
+          setIsComposing(false);
+        };
+        reader.readAsDataURL(file);
+      } catch {
+        setCompositionError("Failed to process file");
+        setIsComposing(false);
+      }
     }
   };
 
@@ -104,6 +134,58 @@ export function EmailSignatureForm({
     },
     [onSubmit]
   );
+
+  // Handle URL input changes with debouncing
+  const handleUrlChange = useCallback(
+    (url: string) => {
+      // Clear existing timeout
+      if (urlTimeoutRef.current) {
+        clearTimeout(urlTimeoutRef.current);
+      }
+
+      if (url && url.trim() !== "") {
+        const trimmedUrl = url.trim();
+        // Check if it's a valid URL
+        if (
+          trimmedUrl.startsWith("http://") ||
+          trimmedUrl.startsWith("https://") ||
+          trimmedUrl.startsWith("data:")
+        ) {
+          setIsComposing(true);
+          setCompositionError(null);
+
+          urlTimeoutRef.current = setTimeout(async () => {
+            try {
+              const composite = await compositeProfilePhoto(trimmedUrl);
+              setPhotoPreview(composite);
+              form.setValue("photoUrl", composite, { shouldValidate: true });
+            } catch (error) {
+              console.error("Error creating composite:", error);
+              setCompositionError(
+                error instanceof Error
+                  ? error.message
+                  : "Failed to create composite image"
+              );
+              // Fallback to original URL if composition fails
+              setPhotoPreview(trimmedUrl);
+            } finally {
+              setIsComposing(false);
+            }
+          }, 500); // Debounce for 500ms
+        }
+      }
+    },
+    [form]
+  );
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (urlTimeoutRef.current) {
+        clearTimeout(urlTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const subscription = form.watch((value) => {
@@ -206,6 +288,10 @@ export function EmailSignatureForm({
                             placeholder="https://example.com/photo.jpg"
                             {...field}
                             value={field.value ?? ""}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              handleUrlChange(e.target.value);
+                            }}
                           />
                         </FormControl>
                       ) : (
@@ -217,13 +303,14 @@ export function EmailSignatureForm({
                           />
                         </FormControl>
                       )}
-                      {photoPreview && (
-                        <div className="mt-2">
-                          <img
-                            src={photoPreview}
-                            alt="Preview"
-                            className="h-24 w-24 rounded-full object-cover border-2 border-gray-200"
-                          />
+                      {isComposing && (
+                        <div className="mt-2 text-sm text-gray-500">
+                          Processing image...
+                        </div>
+                      )}
+                      {compositionError && (
+                        <div className="mt-2 text-sm text-red-500">
+                          {compositionError}
                         </div>
                       )}
                     </div>

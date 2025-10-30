@@ -6,7 +6,7 @@ import type { EmailSignatureTemplate, EmailSignatureData } from "./types";
 function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
   return (
     <div
-      className="w-full max-w-[600px] bg-white p-4 font-sans"
+      className="w-full max-w-[600px] bg-white font-sans"
       style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
     >
       {/* Main content */}
@@ -14,7 +14,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
         {/* Profile photo */}
         {data.showPhoto !== false && (
           <div className="relative">
-            <div className="relative h-28 w-28 overflow-hidden rounded-full">
+            <div className="relative h-36 overflow-hidden">
               {data.photoUrl ? (
                 <img
                   src={data.photoUrl}
@@ -23,7 +23,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
                 />
               ) : (
                 <img
-                  src="https://cms-frontend-api.appmaker.xyz/api/media/file/user-placeholder.png"
+                  src="https://cms-frontend-api.appmaker.xyz/api/media/file/signature-placeholder.png"
                   alt="Gradient Accent"
                   className="h-full w-full"
                 />
@@ -33,7 +33,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
         )}
 
         {/* Contact info */}
-        <div className="flex-1">
+        <div className="flex-1 pt-4 pr-4">
           <div className="mb-1 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[#1a1a2e]">{data.name}</h2>
             <img
@@ -113,7 +113,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
       </div>
 
       {/* Trust badges footer */}
-      <div className="mt-6 border-t border-gray-200 pt-4 flex items-center justify-between divide-x divide-gray-200">
+      <div className="mt-4 border-t border-gray-200 p-4 flex items-center justify-between divide-x divide-gray-200">
         <p className="text-xs text-gray-600 pr-2">
           Trusted by <span className="font-bold">400+</span> Shopify Brands
         </p>
@@ -158,144 +158,35 @@ function generateHTML(data: EmailSignatureData): string {
   const photoHtml =
     data.showPhoto !== false
       ? data.photoUrl
-        ? `<img src="${data.photoUrl}" alt="${data.name}" style="width: 112px; height: 112px; border-radius: 50%; object-fit: cover;" />`
-        : `<img src="https://cms-frontend-api.appmaker.xyz/api/media/file/user-placeholder.png" alt="Gradient Accent" style="width: 112px; height: 112px; border-radius: 50%; object-fit: cover;" />`
+        ? `<td width="144" valign="top"><div style="width:160px;height:144px;overflow:hidden"><img src="${data.photoUrl}" style="width:100%;height:100%;object-fit:cover" /></div></td>`
+        : `<td width="144" valign="top"><div style="width:160px;height:144px;overflow:hidden"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/signature-placeholder.png" style="width:100%;height:100%" /></div></td>`
       : "";
 
-  return `
-<table cellpadding="0" cellspacing="0" border="0" style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; width: 100%; background-color: #ffffff; padding: 16px;">
-  <!-- Main content -->
-  <tr>
-    <td style="padding-bottom: 24px;">
-      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr>
-          <!-- Profile photo -->
-          ${
-            photoHtml
-              ? `<td width="112" valign="top" style="padding-right: 16px;">
-            ${photoHtml}
-          </td>`
-              : ""
-          }
-          
-          <!-- Contact info -->
-          <td valign="top">
-            <table cellpadding="0" cellspacing="0" border="0" width="100%">
-              <tr>
-                <td valign="middle">
-                  <h2 style="margin: 0 0 4px 0; font-size: 20px; font-weight: bold; color: #1a1a2e; line-height: 1.2;">${
-                    data.name
-                  }</h2>
-                </td>
-                <td align="right" valign="middle" style="padding-left: 8px;">
-                  <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" alt="AppMaker" style="height: 20px; display: block;" />
-                </td>
-              </tr>
-            </table>
-            <p style="margin: 0 0 16px 0; font-size: 16px; font-weight: 500; color: #e91e63; line-height: 1.4;">${
-              data.role
-            }</p>
-            
-            <table cellpadding="0" cellspacing="0" border="0">
-              ${
-                data.phone || data.bookingLink
-                  ? `
-              <tr>
-                ${
-                  data.phone
-                    ? `
-                <td style="padding-bottom: 8px; padding-right: 16px;">
-                  <table cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td width="16" valign="middle" style="padding-right: 8px;">
-                        <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png" alt="Phone" style="width: 16px; height: 16px;" />
-                      </td>
-                      <td valign="middle">
-                        <a href="${phoneLink}" style="color: #1a1a2e; text-decoration: underline; text-decoration-color: transparent; font-size: 14px; line-height: 1.5;">${data.phone}</a>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-                `
-                    : ""
-                }
-                ${
-                  data.bookingLink
-                    ? `
-                <td style="padding-bottom: 8px;">
-                  <table cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td width="16" valign="middle" style="padding-right: 8px;">
-                        <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png" alt="Calendar" style="width: 16px; height: 16px;" />
-                      </td>
-                      <td valign="middle">
-                        <a href="${bookingHref}" target="_blank" rel="noopener noreferrer" style="color: #1a1a2e; text-decoration: underline; font-size: 14px; line-height: 1.5;">Book a Call</a>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-                `
-                    : ""
-                }
-              </tr>
-              `
-                  : ""
-              }
-              ${
-                data.linkedinProfile
-                  ? `
-              <tr>
-                <td style="padding-top: 8px;">
-                  <table cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td width="16" valign="middle" style="padding-right: 8px;">
-                        <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png" alt="LinkedIn" style="width: 16px; height: 16px;" />
-                      </td>
-                      <td valign="middle">
-                        <a href="${linkedinHref}" target="_blank" rel="noopener noreferrer" style="color: #1a1a2e; text-decoration: underline; font-size: 14px; line-height: 1.5;">${data.linkedinProfile
-                      .replace(/^https?:\/\//, "")
-                      .replace(/^www\./, "")}</a>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-              `
-                  : ""
-              }
-            </table>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-  
-  <!-- Trust badges footer -->
-  <tr>
-    <td style="padding-top: 24px; border-top: 1px solid #e5e7eb;">
-      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr>
-          <td style="padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <p style="margin: 0; font-size: 12px; color: #4b5563; line-height: 1.5;">Trusted by <strong>400+</strong> Shopify Brands</p>
-          </td>
-          <td width="60" align="center" style="padding-left: 8px; padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png" alt="Levis" style="height: 20px; display: block; max-width: 100%;" />
-          </td>
-          <td width="60" align="center" style="padding-left: 8px; padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png" alt="Jockey" style="height: 20px; display: block; max-width: 100%;" />
-          </td>
-          <td width="60" align="center" style="padding-left: 8px; padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png" alt="Puma" style="height: 20px; display: block; max-width: 100%;" />
-          </td>
-          <td width="60" align="center" style="padding-left: 8px;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png" alt="Nike" style="height: 20px; display: block; max-width: 100%;" />
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-  `.trim();
+  const linkedinText = data.linkedinProfile
+    ? data.linkedinProfile.replace(/^https?:\/\//, "").replace(/^www\./, "")
+    : "";
+
+  return `<table style="font-family:system-ui,-apple-system,sans-serif;max-width:600px;width:100%;background:#fff;padding:16px"><tr><td style="padding-bottom:24px"><table width="100%"><tr>${photoHtml}<td valign="top" style="padding-top:16px;padding-right:16px"><table width="100%"><tr><td valign="middle"><h2 style="margin:0;font-size:20px;font-weight:bold;color:#1a1a2e">${
+    data.name
+  }</h2></td><td align="right" valign="middle" style="padding-left:8px"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" style="height:20px" /></td></tr></table><p style="margin:0 0 8px;font-size:16px;font-weight:500;color:#e91e63">${
+    data.role
+  }</p><table>${
+    data.phone || data.bookingLink
+      ? `<tr><td><table><tr>${
+          data.phone
+            ? `<td style="padding-right:16px"><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png" style="width:16px;height:16px" /></td><td valign="middle"><a href="${phoneLink}" style="color:#1a1a2e;text-decoration:underline;text-decoration-color:transparent;font-size:14px">${data.phone}</a></td></tr></table></td>`
+            : ""
+        }${
+          data.bookingLink
+            ? `<td><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png" style="width:16px;height:16px" /></td><td valign="middle"><a href="${bookingHref}" target="_blank" style="color:#1a1a2e;text-decoration:underline;font-size:14px">Book a Call</a></td></tr></table></td>`
+            : ""
+        }</tr></table></td></tr>`
+      : ""
+  }${
+    data.linkedinProfile
+      ? `<tr><td><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png" style="width:16px;height:16px" /></td><td valign="middle"><a href="${linkedinHref}" target="_blank" style="color:#1a1a2e;text-decoration:underline;font-size:14px">${linkedinText}</a></td></tr></table></td></tr>`
+      : ""
+  }</table></td></tr></table></td></tr><tr><td style="border-top:1px solid #e5e7eb;padding:16px"><table width="100%"><tr><td style="padding-right:8px;border-right:1px solid #e5e7eb"><p style="margin:0;font-size:12px;color:#4b5563">Trusted by <strong>400+</strong> Shopify Brands</p></td><td width="60" align="center" style="padding-left:8px;padding-right:8px;border-right:1px solid #e5e7eb"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png" style="height:20px" /></td><td width="60" align="center" style="padding-left:8px;padding-right:8px;border-right:1px solid #e5e7eb"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png" style="height:20px" /></td><td width="60" align="center" style="padding-left:8px;padding-right:8px;border-right:1px solid #e5e7eb"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png" style="height:20px" /></td><td width="60" align="center" style="padding-left:8px"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png" style="height:20px" /></td></tr></table></td></tr></table>`;
 }
 
 export const defaultTemplate: EmailSignatureTemplate = {
