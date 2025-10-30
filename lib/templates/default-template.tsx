@@ -6,31 +6,11 @@ import type { EmailSignatureTemplate, EmailSignatureData } from "./types";
 function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
   return (
     <div
-      className="relative w-full max-w-[600px] bg-white p-4 font-sans"
+      className="w-full max-w-[600px] bg-white p-4 font-sans"
       style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
     >
-      {/* Gradient accent shape in top-left */}
-      {data.showPhoto !== false && (
-        <div className="absolute left-0 top-0 h-32 w-32">
-          <img
-            src="https://cms-frontend-api.appmaker.xyz/api/media/file/signature-asset.png"
-            alt="Gradient Accent"
-            className="h-full w-full object-contain object-top"
-          />
-        </div>
-      )}
-
-      {/* Company branding top right */}
-      <div className="absolute right-4 top-5 flex items-center gap-2">
-        <img
-          src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png"
-          alt="AppMaker"
-          className="h-5"
-        />
-      </div>
-
       {/* Main content */}
-      <div className="relative z-10 flex items-start gap-4">
+      <div className="flex items-start gap-4">
         {/* Profile photo */}
         {data.showPhoto !== false && (
           <div className="relative">
@@ -54,7 +34,14 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
 
         {/* Contact info */}
         <div className="flex-1">
-          <h2 className="mb-1 text-xl font-bold text-[#1a1a2e]">{data.name}</h2>
+          <div className="mb-1 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-[#1a1a2e]">{data.name}</h2>
+            <img
+              src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png"
+              alt="AppMaker"
+              className="h-5"
+            />
+          </div>
           <p className="mb-4 text-md font-medium text-[#e91e63]">{data.role}</p>
 
           <div className="space-y-2">
@@ -175,42 +162,8 @@ function generateHTML(data: EmailSignatureData): string {
         : `<img src="https://cms-frontend-api.appmaker.xyz/api/media/file/user-placeholder.png" alt="Gradient Accent" style="width: 112px; height: 112px; border-radius: 50%; object-fit: cover;" />`
       : "";
 
-  // Header row with gradient accent and logo using table layout instead of absolute positioning
-  const headerRow =
-    data.showPhoto !== false
-      ? `
-  <!-- Header row with gradient accent and company logo -->
-  <tr>
-    <td style="padding-bottom: 8px;">
-      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr>
-          <!-- Gradient accent shape in top-left -->
-          <td width="128" valign="top" style="padding: 0;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/signature-asset.png" alt="Gradient Accent" style="width: 128px; height: 95px; object-fit: contain; object-position: top; display: block;" />
-          </td>
-          <!-- Spacer to push logo to right -->
-          <td width="*" style="padding: 0;"></td>
-          <!-- Company branding top right -->
-          <td width="auto" align="right" valign="top" style="padding-top: 4px;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" alt="AppMaker" style="height: 20px; display: block;" />
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-    `
-      : `
-  <!-- Header row with company logo only -->
-  <tr>
-    <td style="padding-bottom: 8px;" align="right">
-      <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" alt="AppMaker" style="height: 20px; display: block;" />
-    </td>
-  </tr>
-    `;
-
   return `
 <table cellpadding="0" cellspacing="0" border="0" style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; width: 100%; background-color: #ffffff; padding: 16px;">
-${headerRow}
   <!-- Main content -->
   <tr>
     <td style="padding-bottom: 24px;">
@@ -227,9 +180,18 @@ ${headerRow}
           
           <!-- Contact info -->
           <td valign="top">
-            <h2 style="margin: 0 0 4px 0; font-size: 20px; font-weight: bold; color: #1a1a2e; line-height: 1.2;">${
-              data.name
-            }</h2>
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td valign="middle">
+                  <h2 style="margin: 0 0 4px 0; font-size: 20px; font-weight: bold; color: #1a1a2e; line-height: 1.2;">${
+                    data.name
+                  }</h2>
+                </td>
+                <td align="right" valign="middle" style="padding-left: 8px;">
+                  <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" alt="AppMaker" style="height: 20px; display: block;" />
+                </td>
+              </tr>
+            </table>
             <p style="margin: 0 0 16px 0; font-size: 16px; font-weight: 500; color: #e91e63; line-height: 1.4;">${
               data.role
             }</p>
@@ -314,19 +276,19 @@ ${headerRow}
       <table cellpadding="0" cellspacing="0" border="0" width="100%">
         <tr>
           <td style="padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <p style="margin: 0; font-size: 12px; color: #4b5563; line-height: 1.5;">Trusted by 400+ Shopify Brands</p>
+            <p style="margin: 0; font-size: 12px; color: #4b5563; line-height: 1.5;">Trusted by <strong>400+</strong> Shopify Brands</p>
           </td>
           <td width="60" align="center" style="padding-left: 8px; padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png" alt="Levis" style="height: 24px; display: block; max-width: 100%;" />
+            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png" alt="Levis" style="height: 20px; display: block; max-width: 100%;" />
           </td>
           <td width="60" align="center" style="padding-left: 8px; padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png" alt="Jockey" style="height: 24px; display: block; max-width: 100%;" />
+            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png" alt="Jockey" style="height: 20px; display: block; max-width: 100%;" />
           </td>
           <td width="60" align="center" style="padding-left: 8px; padding-right: 8px; border-right: 1px solid #e5e7eb;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png" alt="Puma" style="height: 24px; display: block; max-width: 100%;" />
+            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png" alt="Puma" style="height: 20px; display: block; max-width: 100%;" />
           </td>
           <td width="60" align="center" style="padding-left: 8px;">
-            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png" alt="Nike" style="height: 24px; display: block; max-width: 100%;" />
+            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png" alt="Nike" style="height: 20px; display: block; max-width: 100%;" />
           </td>
         </tr>
       </table>
