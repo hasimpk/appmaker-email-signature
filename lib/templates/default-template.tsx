@@ -2,7 +2,6 @@
 
 import React from "react";
 import type { EmailSignatureTemplate, EmailSignatureData } from "./types";
-import { Phone, Calendar } from "lucide-react";
 
 function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
   return (
@@ -176,30 +175,45 @@ function generateHTML(data: EmailSignatureData): string {
         : `<img src="https://cms-frontend-api.appmaker.xyz/api/media/file/user-placeholder.png" alt="Gradient Accent" style="width: 112px; height: 112px; border-radius: 50%; object-fit: cover;" />`
       : "";
 
-  const gradientAccentHtml =
+  // Header row with gradient accent and logo using table layout instead of absolute positioning
+  const headerRow =
     data.showPhoto !== false
-      ? ` <!-- Gradient accent shape in top-left (absolute positioned behind) -->
-          <tr>
-            <td style="position: absolute; left: 0; top: 0; width: 128px; height: 95px; z-index: 0;">
-              <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/signature-asset.png" alt="Gradient Accent" style="width: 100%; height: 100%; object-fit: contain; object-position: top;" />
-            </td>
-          </tr>
-          `
-      : "";
-
-  return `
-<table cellpadding="0" cellspacing="0" border="0" style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; width: 100%; background-color: #ffffff; padding: 16px; position: relative;">
-${gradientAccentHtml}
-  <!-- Company branding top right (absolute positioned) -->
+      ? `
+  <!-- Header row with gradient accent and company logo -->
   <tr>
-    <td style="position: absolute; right: 16px; top: 20px; z-index: 1;">
+    <td style="padding-bottom: 8px;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+          <!-- Gradient accent shape in top-left -->
+          <td width="128" valign="top" style="padding: 0;">
+            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/signature-asset.png" alt="Gradient Accent" style="width: 128px; height: 95px; object-fit: contain; object-position: top; display: block;" />
+          </td>
+          <!-- Spacer to push logo to right -->
+          <td width="*" style="padding: 0;"></td>
+          <!-- Company branding top right -->
+          <td width="auto" align="right" valign="top" style="padding-top: 4px;">
+            <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" alt="AppMaker" style="height: 20px; display: block;" />
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+    `
+      : `
+  <!-- Header row with company logo only -->
+  <tr>
+    <td style="padding-bottom: 8px;" align="right">
       <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" alt="AppMaker" style="height: 20px; display: block;" />
     </td>
   </tr>
-  
+    `;
+
+  return `
+<table cellpadding="0" cellspacing="0" border="0" style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; width: 100%; background-color: #ffffff; padding: 16px;">
+${headerRow}
   <!-- Main content -->
   <tr>
-    <td style="padding-bottom: 24px; position: relative; z-index: 1;">
+    <td style="padding-bottom: 24px;">
       <table cellpadding="0" cellspacing="0" border="0" width="100%">
         <tr>
           <!-- Profile photo -->
@@ -296,7 +310,7 @@ ${gradientAccentHtml}
   
   <!-- Trust badges footer -->
   <tr>
-    <td style="padding-top: 24px; border-top: 1px solid #e5e7eb; position: relative; z-index: 1;">
+    <td style="padding-top: 24px; border-top: 1px solid #e5e7eb;">
       <table cellpadding="0" cellspacing="0" border="0" width="100%">
         <tr>
           <td style="padding-right: 8px; border-right: 1px solid #e5e7eb;">
