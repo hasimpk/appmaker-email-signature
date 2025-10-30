@@ -32,7 +32,7 @@ import { templates } from "@/lib/templates/registry";
 const emailSignatureSchema = z.object({
   templateId: z.string().optional(),
   photoUrl: z.string().optional(),
-  showPhoto: z.boolean().optional().default(true),
+  showPhoto: z.boolean(),
   name: z.string().min(1, "Name is required"),
   role: z.string().min(1, "Role is required"),
   phone: z.string().optional(),
