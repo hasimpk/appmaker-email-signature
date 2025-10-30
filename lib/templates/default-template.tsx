@@ -128,27 +128,27 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
       {/* Trust badges footer */}
       <div className="mt-6 border-t border-gray-200 pt-4 flex items-center justify-between divide-x divide-gray-200">
         <p className="text-xs text-gray-600 pr-2">
-          Trusted by 400+ Shopify Brands
+          Trusted by <span className="font-bold">400+</span> Shopify Brands
         </p>
         <img
           src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png"
           alt="Levis"
-          className="h-6 px-2"
+          className="h-5 px-2"
         />
         <img
           src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png"
           alt="Jockey"
-          className="h-6 px-2"
+          className="h-5 px-2"
         />
         <img
           src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png"
           alt="Puma"
-          className="h-6 px-2"
+          className="h-5 px-2"
         />
         <img
           src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png"
           alt="Nike"
-          className="h-6 pl-2"
+          className="h-5 pl-2"
         />
       </div>
     </div>
