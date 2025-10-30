@@ -166,7 +166,7 @@ function generateHTML(data: EmailSignatureData): string {
     ? data.linkedinProfile.replace(/^https?:\/\//, "").replace(/^www\./, "")
     : "";
 
-  return `<style>@media (prefers-color-scheme: dark) { table { background-color: #ffffff !important; } td { background-color: #ffffff !important; } }</style><table style="font-family:system-ui,-apple-system,sans-serif;max-width:600px;width:100%;background:#fff"><tr><td style="padding-bottom:24px"><table width="100%"><tr>${photoHtml}<td valign="top" style="padding-top:16px;padding-right:16px"><table width="100%"><tr><td valign="middle"><h2 style="margin:0;font-size:20px;font-weight:bold;color:#1a1a2e">${
+  return `<table style="font-family:system-ui,-apple-system,sans-serif;max-width:600px;width:100%;background:#fff"><tr><td style="padding-bottom:24px"><table width="100%"><tr>${photoHtml}<td valign="top" style="padding-top:16px;padding-right:16px"><table width="100%"><tr><td valign="middle"><h2 style="margin:0;font-size:20px;font-weight:bold;color:#1a1a2e">${
     data.name
   }</h2></td><td align="right" valign="middle" style="padding-left:8px"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" style="height:20px" /></td></tr></table><p style="margin:0 0 8px;font-size:16px;font-weight:500;color:#e91e63">${
     data.role
