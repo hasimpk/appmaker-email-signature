@@ -315,3 +315,135 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
+// Convert images in HTML string to data URLs
+async function convertImagesInHTMLToDataUrls(html: string): Promise<string> {
+  // Create a temporary DOM element to parse and process the HTML
+  const tempDiv = document.createElement('div')
+  tempDiv.innerHTML = html
+  
+  // Find all img tags
+  const images = tempDiv.querySelectorAll('img')
+  
+  const promises: Promise<void>[] = []
+  
+  images.forEach((img) => {
+    const imgSrc = img.getAttribute('src')
+    if (!imgSrc) return
+    
+    // Skip if already a data URL or blob URL
+    if (imgSrc.startsWith('data:') || imgSrc.startsWith('blob:')) {
+      return
+    }
+    
+    // Skip if it's a relative path (like SVG inline)
+    if (!imgSrc.startsWith('http')) {
+      return
+    }
+    
+    const promise = (async () => {
+      try {
+        // Use our proxy API to fetch the image
+        const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(imgSrc)}`
+        
+        const response = await fetch(proxyUrl)
+        if (!response.ok) {
+          console.warn(`Failed to fetch image: ${imgSrc}`)
+          return
+        }
+        
+        const blob = await response.blob()
+        
+        // Convert to data URL
+        return new Promise<void>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onloadend = () => {
+            if (reader.result && typeof reader.result === 'string') {
+              img.setAttribute('src', reader.result)
+              resolve()
+            } else {
+              reject(new Error('Failed to convert blob to data URL'))
+            }
+          }
+          reader.onerror = () => reject(new Error('FileReader error'))
+          reader.readAsDataURL(blob)
+        })
+      } catch (error) {
+        console.warn(`Failed to convert image ${imgSrc} to data URL:`, error)
+        // Don't throw - continue with other images
+      }
+    })()
+    
+    promises.push(promise)
+  })
+  
+  await Promise.all(promises)
+  
+  return tempDiv.innerHTML
+}
+
+// Copy HTML to clipboard with HTML format (for Gmail)
+export async function copyHTMLToClipboard(html: string): Promise<boolean> {
+  try {
+    // Convert images to data URLs first
+    const processedHTML = await convertImagesInHTMLToDataUrls(html)
+    
+    // Try to use Clipboard API with HTML format
+    if (typeof ClipboardItem !== 'undefined' && navigator.clipboard && navigator.clipboard.write) {
+      try {
+        const clipboardItem = new ClipboardItem({
+          'text/html': new Blob([processedHTML], { type: 'text/html' }),
+          'text/plain': new Blob([processedHTML], { type: 'text/plain' })
+        })
+        
+        await navigator.clipboard.write([clipboardItem])
+        return true
+      } catch (clipboardError) {
+        console.warn('ClipboardItem not supported, falling back to execCommand', clipboardError)
+        // Fall through to execCommand method
+      }
+    }
+    
+    // Fallback: use execCommand with HTML - this works better for Gmail
+    const div = document.createElement('div')
+    div.innerHTML = processedHTML
+    div.style.position = 'fixed'
+    div.style.left = '-9999px'
+    div.contentEditable = 'true'
+    div.setAttribute('readonly', '')
+    document.body.appendChild(div)
+    
+    // Select the element
+    const range = document.createRange()
+    range.selectNodeContents(div)
+    const selection = window.getSelection()
+    selection?.removeAllRanges()
+    selection?.addRange(range)
+    
+    try {
+      const success = document.execCommand('copy')
+      document.body.removeChild(div)
+      selection?.removeAllRanges()
+      
+      if (!success) {
+        // Final fallback to text copy
+        return await copyToClipboard(processedHTML)
+      }
+      
+      return success
+    } catch (error) {
+      document.body.removeChild(div)
+      selection?.removeAllRanges()
+      return await copyToClipboard(processedHTML)
+    }
+  } catch (error) {
+    console.error('Error copying HTML to clipboard:', error)
+    // Final fallback
+    try {
+      const processedHTML = await convertImagesInHTMLToDataUrls(html)
+      return await copyToClipboard(processedHTML)
+    } catch {
+      return false
+    }
+  }
+}
+

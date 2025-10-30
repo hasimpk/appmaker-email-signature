@@ -17,7 +17,7 @@ import type { EmailSignatureData } from "@/lib/templates/types";
 import {
   exportAsHTML,
   exportAsImage,
-  copyToClipboard,
+  copyHTMLToClipboard,
 } from "@/lib/utils/export";
 
 export default function Home() {
@@ -40,12 +40,29 @@ export default function Home() {
   };
 
   const handleCopyHTML = async () => {
-    const success = await copyToClipboard(
-      htmlCode || exportAsHTML(signatureData)
-    );
-    if (success) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+    try {
+      // Use the template's generateHTML method for Gmail compatibility
+      // This produces table-based HTML with inline styles, which is best for email clients
+      const htmlToCopy = htmlCode || exportAsHTML(signatureData);
+
+      const success = await copyHTMLToClipboard(htmlToCopy);
+      if (success) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      console.error("Error copying HTML:", error);
+      // Fallback: try to copy the generated HTML
+      try {
+        const htmlToCopy = exportAsHTML(signatureData);
+        const success = await copyHTMLToClipboard(htmlToCopy);
+        if (success) {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        }
+      } catch (fallbackError) {
+        console.error("Fallback copy failed:", fallbackError);
+      }
     }
   };
 
@@ -189,7 +206,7 @@ export default function Home() {
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 <Textarea
                   value={htmlCode || exportAsHTML(signatureData)}
                   readOnly
