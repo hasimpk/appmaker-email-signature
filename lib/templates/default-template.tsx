@@ -43,21 +43,11 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gray-200 text-gray-400">
-                  <svg
-                    className="h-12 w-12"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                </div>
+                <img
+                  src="https://cms-frontend-api.appmaker.xyz/api/media/file/user-placeholder.png"
+                  alt="Gradient Accent"
+                  className="h-full w-full"
+                />
               )}
             </div>
           </div>
@@ -72,7 +62,11 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
             <div className="flex items-center gap-4">
               {data.phone && (
                 <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-[#1a1a2e]" />
+                  <img
+                    src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png"
+                    alt="Phone"
+                    className="h-4 w-4"
+                  />
                   <a
                     href={`tel:${data.phone.replace(/\s/g, "")}`}
                     className="text-sm text-[#1a1a2e] underline decoration-transparent transition-colors hover:decoration-[#1a1a2e]"
@@ -84,7 +78,11 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
 
               {data.bookingLink && (
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-[#1a1a2e]" />
+                  <img
+                    src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png"
+                    alt="Calendar"
+                    className="h-4 w-4"
+                  />
                   <a
                     href={
                       data.bookingLink.startsWith("http")
@@ -103,9 +101,11 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
 
             {data.linkedinProfile && (
               <div className="flex items-center gap-2">
-                <svg width="16" height="16" fill="#1a1a2e" viewBox="0 0 24 24">
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
+                <img
+                  src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png"
+                  alt="LinkedIn"
+                  className="h-4 w-4"
+                />
                 <a
                   href={
                     data.linkedinProfile.startsWith("http")
@@ -173,11 +173,7 @@ function generateHTML(data: EmailSignatureData): string {
     data.showPhoto !== false
       ? data.photoUrl
         ? `<img src="${data.photoUrl}" alt="${data.name}" style="width: 112px; height: 112px; border-radius: 50%; object-fit: cover;" />`
-        : `<div style="width: 112px; height: 112px; border-radius: 50%; background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;">
-            <svg width="48" height="48" fill="none" stroke="#9ca3af" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-            </svg>
-          </div>`
+        : `<img src="https://cms-frontend-api.appmaker.xyz/api/media/file/user-placeholder.png" alt="Gradient Accent" style="width: 112px; height: 112px; border-radius: 50%; object-fit: cover;" />`
       : "";
 
   const gradientAccentHtml =
@@ -236,9 +232,7 @@ ${gradientAccentHtml}
                   <table cellpadding="0" cellspacing="0" border="0">
                     <tr>
                       <td width="16" valign="middle" style="padding-right: 8px;">
-                        <svg width="16" height="16" fill="none" stroke="#1a1a2e" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                        </svg>
+                        <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png" alt="Phone" style="width: 16px; height: 16px;" />
                       </td>
                       <td valign="middle">
                         <a href="${phoneLink}" style="color: #1a1a2e; text-decoration: underline; text-decoration-color: transparent; font-size: 14px; line-height: 1.5;">${data.phone}</a>
@@ -256,9 +250,7 @@ ${gradientAccentHtml}
                   <table cellpadding="0" cellspacing="0" border="0">
                     <tr>
                       <td width="16" valign="middle" style="padding-right: 8px;">
-                        <svg width="16" height="16" fill="none" stroke="#1a1a2e" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
+                        <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png" alt="Calendar" style="width: 16px; height: 16px;" />
                       </td>
                       <td valign="middle">
                         <a href="${bookingHref}" target="_blank" rel="noopener noreferrer" style="color: #1a1a2e; text-decoration: underline; font-size: 14px; line-height: 1.5;">Book a Call</a>
@@ -281,9 +273,7 @@ ${gradientAccentHtml}
                   <table cellpadding="0" cellspacing="0" border="0">
                     <tr>
                       <td width="16" valign="middle" style="padding-right: 8px;">
-                        <svg width="16" height="16" fill="#1a1a2e" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                        </svg>
+                        <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png" alt="LinkedIn" style="width: 16px; height: 16px;" />
                       </td>
                       <td valign="middle">
                         <a href="${linkedinHref}" target="_blank" rel="noopener noreferrer" style="color: #1a1a2e; text-decoration: underline; font-size: 14px; line-height: 1.5;">${data.linkedinProfile
