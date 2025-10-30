@@ -174,17 +174,17 @@ function generateHTML(data: EmailSignatureData): string {
     data.phone || data.bookingLink
       ? `<tr><td><table><tr>${
           data.phone
-            ? `<td style="padding-right:16px"><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png" style="width:16px;height:16px" /></td><td valign="middle"><a href="${phoneLink}" style="color:#1a1a2e;text-decoration:underline;text-decoration-color:transparent;font-size:14px">${data.phone}</a></td></tr></table></td>`
+            ? `<td style="padding-right:16px"><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png" style="width:16px;height:16px;vertical-align:middle" /></td><td valign="middle"><a href="${phoneLink}" style="color:#1a1a2e;text-decoration:underline;text-decoration-color:transparent;font-size:14px;line-height:16px;vertical-align:middle">${data.phone}</a></td></tr></table></td>`
             : ""
         }${
           data.bookingLink
-            ? `<td><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png" style="width:16px;height:16px" /></td><td valign="middle"><a href="${bookingHref}" target="_blank" style="color:#1a1a2e;text-decoration:underline;font-size:14px">Book a Call</a></td></tr></table></td>`
+            ? `<td><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png" style="width:16px;height:16px;vertical-align:middle" /></td><td valign="middle"><a href="${bookingHref}" target="_blank" style="color:#1a1a2e;text-decoration:underline;font-size:14px;line-height:16px;vertical-align:middle">Book a Call</a></td></tr></table></td>`
             : ""
         }</tr></table></td></tr>`
       : ""
   }${
     data.linkedinProfile
-      ? `<tr><td><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png" style="width:16px;height:16px" /></td><td valign="middle"><a href="${linkedinHref}" target="_blank" style="color:#1a1a2e;text-decoration:underline;font-size:14px">${linkedinText}</a></td></tr></table></td></tr>`
+      ? `<tr><td><table><tr><td width="16" valign="middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png" style="width:16px;height:16px;vertical-align:middle" /></td><td valign="middle"><a href="${linkedinHref}" target="_blank" style="color:#1a1a2e;text-decoration:underline;font-size:14px;line-height:16px;vertical-align:middle">${linkedinText}</a></td></tr></table></td></tr>`
       : ""
   }</table></td></tr></table></td></tr><tr><td style="border-top:1px solid #e5e7eb;padding:16px"><table width="100%"><tr><td style="padding-right:8px;border-right:1px solid #e5e7eb"><p style="margin:0;font-size:12px;color:#4b5563">Trusted by <strong>400+</strong> Shopify Brands</p></td><td width="60" align="center" style="padding-left:8px;padding-right:8px;border-right:1px solid #e5e7eb"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png" style="height:20px" /></td><td width="60" align="center" style="padding-left:8px;padding-right:8px;border-right:1px solid #e5e7eb"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png" style="height:20px" /></td><td width="60" align="center" style="padding-left:8px;padding-right:8px;border-right:1px solid #e5e7eb"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png" style="height:20px" /></td><td width="60" align="center" style="padding-left:8px"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png" style="height:20px" /></td></tr></table></td></tr></table>`;
 }
