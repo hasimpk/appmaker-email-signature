@@ -50,22 +50,50 @@ export default function Home() {
   };
 
   const handleExportImage = async (format: "png" | "jpeg") => {
-    if (previewRef.current) {
-      // Find the actual signature content element
-      const previewElement = previewRef.current.querySelector(
-        '[data-export-target="true"] > div'
-      ) as HTMLElement;
-      if (previewElement) {
-        await exportAsImage(
-          previewElement,
-          format,
-          `email-signature-${signatureData.name
-            .replace(/\s/g, "-")
-            .toLowerCase()}`
-        );
-      } else {
-        console.error("Could not find preview element for export");
+    try {
+      if (!previewRef.current) {
+        console.error("Preview ref is not available");
+        return;
       }
+
+      // Find the actual signature content element
+      // First try to find the element with data-export-target attribute
+      const exportTarget = previewRef.current.querySelector(
+        '[data-export-target="true"]'
+      ) as HTMLElement;
+
+      if (!exportTarget) {
+        console.error("Could not find export target element");
+        return;
+      }
+
+      // Get the direct child element (the actual signature content)
+      // The template renders a div directly, so firstElementChild should be it
+      let previewElement = exportTarget.firstElementChild as HTMLElement;
+
+      // Fallback: if no child found, use the export target itself
+      if (!previewElement) {
+        console.warn("No child element found, using export target element");
+        previewElement = exportTarget;
+      }
+
+      if (!previewElement) {
+        console.error("Could not find preview element for export");
+        return;
+      }
+
+      const filename = `email-signature-${signatureData.name
+        .replace(/\s/g, "-")
+        .toLowerCase()}`;
+
+      await exportAsImage(previewElement, format, filename);
+    } catch (error) {
+      console.error("Error in handleExportImage:", error);
+      alert(
+        `Failed to export image: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
     }
   };
 
