@@ -205,6 +205,7 @@ export function EmailSignatureForm({
                           <Input
                             placeholder="https://example.com/photo.jpg"
                             {...field}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                       ) : (
@@ -227,9 +228,11 @@ export function EmailSignatureForm({
                       )}
                     </div>
                   )}
-                  <FormDescription>
-                    Upload a photo or provide an image URL
-                  </FormDescription>
+                  {form.watch("showPhoto") !== false && (
+                    <FormDescription>
+                      Upload a photo or provide an image URL
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -242,7 +245,11 @@ export function EmailSignatureForm({
                 <FormItem>
                   <FormLabel>Name *</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input
+                      placeholder="John Doe"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -256,7 +263,11 @@ export function EmailSignatureForm({
                 <FormItem>
                   <FormLabel>Role *</FormLabel>
                   <FormControl>
-                    <Input placeholder="VP Sales" {...field} />
+                    <Input
+                      placeholder="VP Sales"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -270,7 +281,11 @@ export function EmailSignatureForm({
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input placeholder="+1 234 567 8900" {...field} />
+                    <Input
+                      placeholder="+1 234 567 8900"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
                   </FormControl>
                   <FormDescription>Format: +1 234 567 8900</FormDescription>
                   <FormMessage />
@@ -288,6 +303,7 @@ export function EmailSignatureForm({
                     <Input
                       placeholder="calendly.com/user or https://..."
                       {...field}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>
@@ -308,6 +324,7 @@ export function EmailSignatureForm({
                     <Input
                       placeholder="linkedin.com/in/username or https://..."
                       {...field}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>
