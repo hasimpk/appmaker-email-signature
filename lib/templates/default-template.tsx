@@ -33,7 +33,11 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
         )}
 
         {/* Contact info */}
-        <div className="flex-1 pt-4 pr-4">
+        <div
+          className={`flex-1 pt-4 pr-4 ${
+            data.showPhoto === false ? "pl-4" : ""
+          }`}
+        >
           <div className="mb-1 flex items-center justify-between">
             <h2 className="text-xl font-bold text-[#1a1a2e]">{data.name}</h2>
             <img
@@ -166,7 +170,12 @@ function generateHTML(data: EmailSignatureData): string {
     ? data.linkedinProfile.replace(/^https?:\/\//, "").replace(/^www\./, "")
     : "";
 
-  return `<table style="font-family:system-ui,-apple-system,sans-serif;max-width:600px;width:100%;background:#fff"><tr><td style="padding-bottom:24px"><table width="100%"><tr>${photoHtml}<td valign="top" style="padding-top:16px;padding-right:16px"><table width="100%"><tr><td valign="middle"><h2 style="margin:0;font-size:20px;font-weight:bold;color:#1a1a2e">${
+  const contactInfoPadding =
+    data.showPhoto === false
+      ? "padding-top:16px;padding-right:16px;padding-left:16px"
+      : "padding-top:16px;padding-right:16px";
+
+  return `<table style="font-family:system-ui,-apple-system,sans-serif;max-width:600px;width:100%;background:#fff"><tr><td style="padding-bottom:24px"><table width="100%"><tr>${photoHtml}<td valign="top" style="${contactInfoPadding}"><table width="100%"><tr><td valign="middle"><h2 style="margin:0;font-size:20px;font-weight:bold;color:#1a1a2e">${
     data.name
   }</h2></td><td align="right" valign="middle" style="padding-left:8px"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" style="height:20px" /></td></tr></table><p style="margin:0 0 8px;font-size:16px;font-weight:500;color:#e91e63">${
     data.role
