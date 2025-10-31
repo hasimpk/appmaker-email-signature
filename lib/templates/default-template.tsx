@@ -10,11 +10,11 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
       style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
     >
       {/* Main content */}
-      <div className="flex items-start gap-4">
-        {/* Profile photo */}
+      <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-4">
+        {/* Profile photo with mobile logo */}
         {data.showPhoto !== false && (
-          <div className="relative">
-            <div className="relative h-36 overflow-hidden">
+          <div className="flex items-start justify-between w-full sm:w-auto sm:block">
+            <div className="relative h-36 w-40 overflow-hidden">
               {data.photoUrl ? (
                 <img
                   src={data.photoUrl}
@@ -29,37 +29,48 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
                 />
               )}
             </div>
+            {/* Mobile logo - right aligned */}
+            <img
+              src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png"
+              alt="AppMaker"
+              className="h-5 sm:hidden shrink-0 mt-2 pr-4"
+            />
           </div>
         )}
 
         {/* Contact info */}
         <div
-          className={`flex-1 pt-4 pr-4 ${
-            data.showPhoto === false ? "pl-4" : ""
+          className={`flex-1 w-full pt-2 sm:pt-4 pr-4 ${
+            data.showPhoto === false ? "pl-4" : "pl-4 sm:pl-0"
           }`}
         >
-          <div className="mb-1 flex items-center justify-between">
-            <h2 className="text-xl font-bold text-[#1a1a2e]">{data.name}</h2>
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <h2 className="text-lg sm:text-xl font-bold text-[#1a1a2e]">
+              {data.name}
+            </h2>
+            {/* Desktop logo - next to name */}
             <img
               src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png"
               alt="AppMaker"
-              className="h-5"
+              className="hidden sm:block h-5 shrink-0"
             />
           </div>
-          <p className="mb-4 text-md font-medium text-[#e91e63]">{data.role}</p>
+          <p className="mb-3 sm:mb-4 text-sm sm:text-md font-medium text-[#e91e63]">
+            {data.role}
+          </p>
 
           <div className="space-y-2">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
               {data.phone && (
                 <div className="flex items-center gap-2">
                   <img
                     src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png"
                     alt="Phone"
-                    className="h-4 w-4"
+                    className="h-4 w-4 shrink-0"
                   />
                   <a
                     href={`tel:${data.phone.replace(/\s/g, "")}`}
-                    className="text-sm text-[#1a1a2e] underline decoration-transparent transition-colors hover:decoration-[#1a1a2e]"
+                    className="text-sm text-[#1a1a2e] underline decoration-transparent transition-colors hover:decoration-[#1a1a2e] break-all"
                   >
                     {data.phone}
                   </a>
@@ -71,7 +82,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
                   <img
                     src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png"
                     alt="Calendar"
-                    className="h-4 w-4"
+                    className="h-4 w-4 shrink-0"
                   />
                   <a
                     href={
@@ -81,7 +92,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-[#1a1a2e] underline transition-colors hover:decoration-[#1a1a2e]"
+                    className="text-sm text-[#1a1a2e] underline transition-colors hover:decoration-[#1a1a2e] break-all"
                   >
                     Book a Call
                   </a>
@@ -94,7 +105,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
                 <img
                   src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png"
                   alt="LinkedIn"
-                  className="h-4 w-4"
+                  className="h-4 w-4 shrink-0"
                 />
                 <a
                   href={
@@ -104,7 +115,7 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-[#1a1a2e] underline transition-colors hover:decoration-[#1a1a2e]"
+                  className="text-sm text-[#1a1a2e] underline transition-colors hover:decoration-[#1a1a2e] break-all"
                 >
                   {data.linkedinProfile
                     .replace(/^https?:\/\//, "")
@@ -117,30 +128,32 @@ function DefaultTemplateRenderer({ data }: { data: EmailSignatureData }) {
       </div>
 
       {/* Trust badges footer */}
-      <div className="mt-4 border-t border-gray-200 p-4 flex items-center justify-between divide-x divide-gray-200">
-        <p className="text-xs text-gray-600 pr-2">
+      <div className="mt-4 border-t border-gray-200 p-3 sm:p-4 flex flex-col sm:flex-row items-center sm:justify-between gap-3 sm:gap-0 sm:divide-x divide-gray-200">
+        <p className="text-xs text-gray-600 sm:pr-2 text-center sm:text-left">
           Trusted by <span className="font-bold">400+</span> Shopify Brands
         </p>
-        <img
-          src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png"
-          alt="Levis"
-          className="h-5 px-2"
-        />
-        <img
-          src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png"
-          alt="Jockey"
-          className="h-5 px-2"
-        />
-        <img
-          src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png"
-          alt="Puma"
-          className="h-5 px-2"
-        />
-        <img
-          src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png"
-          alt="Nike"
-          className="h-5 pl-2"
-        />
+        <div className="flex items-center justify-center gap-2 sm:gap-0 flex-wrap">
+          <img
+            src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png"
+            alt="Levis"
+            className="h-4 sm:h-5 px-2"
+          />
+          <img
+            src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey.png"
+            alt="Jockey"
+            className="h-4 sm:h-5 px-2"
+          />
+          <img
+            src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png"
+            alt="Puma"
+            className="h-4 sm:h-5 px-2"
+          />
+          <img
+            src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png"
+            alt="Nike"
+            className="h-4 sm:h-5 px-2 sm:pl-2"
+          />
+        </div>
       </div>
     </div>
   );
