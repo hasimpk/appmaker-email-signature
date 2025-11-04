@@ -418,8 +418,9 @@ async function convertImagesInHTMLToDataUrls(html: string): Promise<string> {
 // Copy HTML to clipboard with HTML format (for Gmail)
 export async function copyHTMLToClipboard(html: string): Promise<boolean> {
   try {
-    // Convert images to data URLs first
-    const processedHTML = await convertImagesInHTMLToDataUrls(html);
+    // Skip base64 conversion - Gmail can handle external image URLs
+    // Converting to base64 makes HTML too long for Gmail's signature limit
+    const processedHTML = html;
 
     // Try to use Clipboard API with HTML format
     if (
@@ -478,12 +479,7 @@ export async function copyHTMLToClipboard(html: string): Promise<boolean> {
     }
   } catch (error) {
     console.error("Error copying HTML to clipboard:", error);
-    // Final fallback
-    try {
-      const processedHTML = await convertImagesInHTMLToDataUrls(html);
-      return await copyToClipboard(processedHTML);
-    } catch {
-      return false;
-    }
+    // Final fallback - use original HTML without base64 conversion
+    return await copyToClipboard(html);
   }
 }
