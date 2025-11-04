@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Download, Copy, Check } from "lucide-react";
+import { Download, Copy, Check, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,10 +9,19 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardAction,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { EmailSignatureForm } from "@/components/email-signature-form/email-signature-form";
 import { TemplatePreview } from "@/components/template-preview/template-preview";
 import type { EmailSignatureData } from "@/lib/templates/types";
@@ -194,6 +203,129 @@ export default function Home() {
                 <CardDescription>
                   Live preview of your email signature
                 </CardDescription>
+                <CardAction>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="h-8 w-8"
+                      >
+                        <Info className="h-4 w-4" />
+                        <span className="sr-only">Show Gmail instructions</span>
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-full sm:max-w-lg">
+                      <SheetHeader>
+                        <SheetTitle>How to Add Signature to Gmail</SheetTitle>
+                        <SheetDescription>
+                          Follow these steps to add your email signature to
+                          Gmail
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="mt-6 space-y-6 px-4 pb-4">
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-base">
+                            Step 1: Copy the HTML Code
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Click the button below to copy your email signature
+                            HTML code to your clipboard.
+                          </p>
+                          <Button
+                            variant="default"
+                            className="w-full"
+                            onClick={handleCopyHTML}
+                          >
+                            {copied ? (
+                              <>
+                                <Check className="mr-2 h-4 w-4" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="mr-2 h-4 w-4" />
+                                Copy HTML Code
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-base">
+                            Step 2: Open Gmail Settings
+                          </h3>
+                          <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                            <li>
+                              <a
+                                href="https://mail.google.com/mail/u/0/#settings/general"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline font-medium"
+                              >
+                                Open Gmail Settings
+                              </a>{" "}
+                              or click the gear icon (⚙️) in the top right
+                              corner and select &quot;See all settings&quot;
+                            </li>
+                          </ol>
+                        </div>
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-base">
+                            Step 3: Navigate to Signature Settings
+                          </h3>
+                          <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                            <li>Click on the &quot;General&quot; tab</li>
+                            <li>
+                              Scroll down to the &quot;Signature&quot; section
+                            </li>
+                            <li>
+                              If you don&apos;t have a signature yet, click
+                              &quot;Create new&quot;
+                            </li>
+                            <li>
+                              If you want to replace an existing signature,
+                              select it from the dropdown
+                            </li>
+                          </ol>
+                        </div>
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-base">
+                            Step 4: Paste Your Signature
+                          </h3>
+                          <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                            <li>In the signature editor, right-click</li>
+                            <li>Paste using Ctrl+V (Cmd+V on Mac)</li>
+                            <li>Your signature should appear in the editor</li>
+                            <li>
+                              Make sure &quot;Insert this signature before
+                              quoted text in replies and remove the
+                              &quot;--&quot; line that precedes it&quot; is
+                              checked if you want it in replies
+                            </li>
+                          </ol>
+                        </div>
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-base">
+                            Step 5: Save Your Changes
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            Scroll to the bottom of the settings page and click
+                            &quot;Save Changes&quot;. Your signature will now
+                            automatically appear in new emails!
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800">
+                          <p className="text-sm text-blue-900 dark:text-blue-100">
+                            <strong>Tip:</strong> You can set different
+                            signatures for different email addresses by
+                            selecting the address from the dropdown in the
+                            Signature section.
+                          </p>
+                        </div>
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                </CardAction>
               </CardHeader>
               <CardContent>
                 <div className="rounded-lg bg-white border border-gray-200 overflow-hidden">
