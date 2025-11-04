@@ -40,15 +40,21 @@ export default function Home() {
     bookingLink: "",
     linkedinProfile: "linkedin.com/john-doe",
   });
+  const [templateId, setTemplateId] = useState<string>("banner");
   const [htmlCode, setHtmlCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [exportFormat, setExportFormat] = useState<"png" | "jpeg">("png");
   const [exportScale, setExportScale] = useState<number>(1);
   const previewRef = useRef<HTMLDivElement>(null);
 
-  const handleFormSubmit = (data: EmailSignatureData) => {
+  const handleFormSubmit = (
+    data: EmailSignatureData,
+    selectedTemplateId?: string
+  ) => {
     setSignatureData(data);
-    const html = exportAsHTML(data);
+    const currentTemplateId = selectedTemplateId || templateId;
+    setTemplateId(currentTemplateId);
+    const html = exportAsHTML(data, currentTemplateId);
     setHtmlCode(html);
   };
 
@@ -56,7 +62,7 @@ export default function Home() {
     try {
       // Use the template's generateHTML method for Gmail compatibility
       // This produces table-based HTML with inline styles, which is best for email clients
-      const htmlToCopy = htmlCode || exportAsHTML(signatureData);
+      const htmlToCopy = htmlCode || exportAsHTML(signatureData, templateId);
 
       const success = await copyHTMLToClipboard(htmlToCopy);
       if (success) {
@@ -67,7 +73,7 @@ export default function Home() {
       console.error("Error copying HTML:", error);
       // Fallback: try to copy the generated HTML
       try {
-        const htmlToCopy = exportAsHTML(signatureData);
+        const htmlToCopy = exportAsHTML(signatureData, templateId);
         const success = await copyHTMLToClipboard(htmlToCopy);
         if (success) {
           setCopied(true);
@@ -143,6 +149,7 @@ export default function Home() {
             <EmailSignatureForm
               onSubmit={handleFormSubmit}
               defaultValues={signatureData}
+              defaultTemplateId={templateId}
             />
 
             {/* Export Options */}
@@ -330,7 +337,10 @@ export default function Home() {
               <CardContent>
                 <div className="rounded-lg bg-white border border-gray-200 overflow-hidden">
                   <div ref={previewRef}>
-                    <TemplatePreview data={signatureData} />
+                    <TemplatePreview
+                      data={signatureData}
+                      templateId={templateId}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -363,7 +373,7 @@ export default function Home() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <Textarea
-                  value={htmlCode || exportAsHTML(signatureData)}
+                  value={htmlCode || exportAsHTML(signatureData, templateId)}
                   readOnly
                   className="min-h-[300px] font-mono text-sm"
                   onClick={(e) => {

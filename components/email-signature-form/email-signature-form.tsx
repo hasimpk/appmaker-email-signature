@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/card";
 import type { EmailSignatureData } from "@/lib/templates/types";
 import { compositeProfilePhoto } from "@/lib/utils/image-composition";
+import { Select } from "@/components/ui/select";
+import { templates } from "@/lib/templates/registry";
 
 const emailSignatureSchema = z.object({
   templateId: z.string().optional(),
@@ -41,13 +43,15 @@ const emailSignatureSchema = z.object({
 type EmailSignatureFormData = z.infer<typeof emailSignatureSchema>;
 
 interface EmailSignatureFormProps {
-  onSubmit: (data: EmailSignatureData) => void;
+  onSubmit: (data: EmailSignatureData, templateId?: string) => void;
   defaultValues?: Partial<EmailSignatureData>;
+  defaultTemplateId?: string;
 }
 
 export function EmailSignatureForm({
   onSubmit,
   defaultValues,
+  defaultTemplateId = "default",
 }: EmailSignatureFormProps) {
   const [photoUploadType, setPhotoUploadType] = useState<"url" | "file">("url");
   const [photoPreview, setPhotoPreview] = useState<string>(
@@ -56,11 +60,17 @@ export function EmailSignatureForm({
   const [isComposing, setIsComposing] = useState(false);
   const [compositionError, setCompositionError] = useState<string | null>(null);
   const urlTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const originalPhotoRef = useRef<string | null>(
+    defaultValues?.photoUrl &&
+      !defaultValues.photoUrl.startsWith("data:image/png")
+      ? defaultValues.photoUrl
+      : null
+  );
 
   const form = useForm<EmailSignatureFormData>({
     resolver: zodResolver(emailSignatureSchema),
     defaultValues: {
-      templateId: "default",
+      templateId: defaultTemplateId,
       photoUrl: defaultValues?.photoUrl || "",
       showPhoto: defaultValues?.showPhoto ?? true,
       name: defaultValues?.name || "",
@@ -76,7 +86,11 @@ export function EmailSignatureForm({
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsComposing(true);
+      const currentTemplateId =
+        form.getValues("templateId") || defaultTemplateId;
+      const shouldCompose = currentTemplateId === "default";
+
+      setIsComposing(shouldCompose);
       setCompositionError(null);
 
       try {
@@ -84,18 +98,25 @@ export function EmailSignatureForm({
         reader.onloadend = async () => {
           try {
             const result = reader.result as string;
-            // Create composite image
-            const composite = await compositeProfilePhoto(result);
-            setPhotoPreview(composite);
-            form.setValue("photoUrl", composite);
+            // Store original image
+            originalPhotoRef.current = result;
+
+            if (shouldCompose) {
+              // Create composite image only for default template
+              const composite = await compositeProfilePhoto(result);
+              setPhotoPreview(composite);
+              form.setValue("photoUrl", composite);
+            } else {
+              // Use original image for other templates (like banner)
+              setPhotoPreview(result);
+              form.setValue("photoUrl", result);
+            }
           } catch (error) {
-            console.error("Error creating composite:", error);
+            console.error("Error processing image:", error);
             setCompositionError(
-              error instanceof Error
-                ? error.message
-                : "Failed to create composite image"
+              error instanceof Error ? error.message : "Failed to process image"
             );
-            // Fallback to original image if composition fails
+            // Fallback to original image if processing fails
             const result = reader.result as string;
             setPhotoPreview(result);
             form.setValue("photoUrl", result);
@@ -116,21 +137,24 @@ export function EmailSignatureForm({
   };
 
   const handleSubmit = form.handleSubmit((data) => {
-    onSubmit({
-      photoUrl: data.photoUrl || "",
-      showPhoto: data.showPhoto ?? true,
-      name: data.name,
-      role: data.role,
-      phone: data.phone,
-      bookingLink: data.bookingLink,
-      linkedinProfile: data.linkedinProfile,
-    });
+    onSubmit(
+      {
+        photoUrl: data.photoUrl || "",
+        showPhoto: data.showPhoto ?? true,
+        name: data.name,
+        role: data.role,
+        phone: data.phone,
+        bookingLink: data.bookingLink,
+        linkedinProfile: data.linkedinProfile,
+      },
+      data.templateId || defaultTemplateId
+    );
   });
 
   // Auto-update on field changes
   const stableOnSubmit = useCallback(
-    (data: EmailSignatureData) => {
-      onSubmit(data);
+    (data: EmailSignatureData, templateId?: string) => {
+      onSubmit(data, templateId);
     },
     [onSubmit]
   );
@@ -151,22 +175,36 @@ export function EmailSignatureForm({
           trimmedUrl.startsWith("https://") ||
           trimmedUrl.startsWith("data:")
         ) {
-          setIsComposing(true);
+          const currentTemplateId =
+            form.getValues("templateId") || defaultTemplateId;
+          const shouldCompose = currentTemplateId === "default";
+
+          setIsComposing(shouldCompose);
           setCompositionError(null);
 
           urlTimeoutRef.current = setTimeout(async () => {
             try {
-              const composite = await compositeProfilePhoto(trimmedUrl);
-              setPhotoPreview(composite);
-              form.setValue("photoUrl", composite, { shouldValidate: true });
+              // Store original URL
+              originalPhotoRef.current = trimmedUrl;
+
+              if (shouldCompose) {
+                // Create composite image only for default template
+                const composite = await compositeProfilePhoto(trimmedUrl);
+                setPhotoPreview(composite);
+                form.setValue("photoUrl", composite, { shouldValidate: true });
+              } else {
+                // Use original URL for other templates (like banner)
+                setPhotoPreview(trimmedUrl);
+                form.setValue("photoUrl", trimmedUrl, { shouldValidate: true });
+              }
             } catch (error) {
-              console.error("Error creating composite:", error);
+              console.error("Error processing image:", error);
               setCompositionError(
                 error instanceof Error
                   ? error.message
-                  : "Failed to create composite image"
+                  : "Failed to process image"
               );
-              // Fallback to original URL if composition fails
+              // Fallback to original URL if processing fails
               setPhotoPreview(trimmedUrl);
             } finally {
               setIsComposing(false);
@@ -175,7 +213,7 @@ export function EmailSignatureForm({
         }
       }
     },
-    [form]
+    [form, defaultTemplateId]
   );
 
   // Cleanup timeout on unmount
@@ -190,19 +228,22 @@ export function EmailSignatureForm({
   useEffect(() => {
     const subscription = form.watch((value) => {
       if (value.name && value.role) {
-        stableOnSubmit({
-          photoUrl: value.photoUrl || "",
-          showPhoto: value.showPhoto ?? true,
-          name: value.name,
-          role: value.role,
-          phone: value.phone || undefined,
-          bookingLink: value.bookingLink || undefined,
-          linkedinProfile: value.linkedinProfile || undefined,
-        });
+        stableOnSubmit(
+          {
+            photoUrl: value.photoUrl || "",
+            showPhoto: value.showPhoto ?? true,
+            name: value.name,
+            role: value.role,
+            phone: value.phone || undefined,
+            bookingLink: value.bookingLink || undefined,
+            linkedinProfile: value.linkedinProfile || undefined,
+          },
+          value.templateId || defaultTemplateId
+        );
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, stableOnSubmit]);
+  }, [form, stableOnSubmit, defaultTemplateId]);
 
   return (
     <Card>
@@ -215,13 +256,108 @@ export function EmailSignatureForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* <FormField
+            <FormField
               control={form.control}
               name="templateId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Template</FormLabel>
-                  <Select {...field}>
+                  <Select
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      const newTemplateId = e.target.value || defaultTemplateId;
+                      const currentValues = form.getValues();
+
+                      // If switching templates and we have an original photo, reprocess it
+                      if (originalPhotoRef.current && currentValues.photoUrl) {
+                        const shouldCompose = newTemplateId === "default";
+                        const originalPhoto = originalPhotoRef.current;
+
+                        if (
+                          shouldCompose &&
+                          !currentValues.photoUrl.startsWith("data:image/png")
+                        ) {
+                          // Switch to default template - need to create composite
+                          setIsComposing(true);
+                          compositeProfilePhoto(originalPhoto)
+                            .then((composite) => {
+                              form.setValue("photoUrl", composite);
+                              setPhotoPreview(composite);
+                              setIsComposing(false);
+                              // Trigger update with new composite
+                              const updatedValues = form.getValues();
+                              if (updatedValues.name && updatedValues.role) {
+                                stableOnSubmit(
+                                  {
+                                    photoUrl: composite,
+                                    showPhoto: updatedValues.showPhoto ?? true,
+                                    name: updatedValues.name,
+                                    role: updatedValues.role,
+                                    phone: updatedValues.phone || undefined,
+                                    bookingLink:
+                                      updatedValues.bookingLink || undefined,
+                                    linkedinProfile:
+                                      updatedValues.linkedinProfile ||
+                                      undefined,
+                                  },
+                                  newTemplateId
+                                );
+                              }
+                            })
+                            .catch((error) => {
+                              console.error("Error creating composite:", error);
+                              // Fallback to original
+                              form.setValue("photoUrl", originalPhoto);
+                              setPhotoPreview(originalPhoto);
+                              setIsComposing(false);
+                            });
+                        } else if (
+                          !shouldCompose &&
+                          currentValues.photoUrl.startsWith("data:image/png")
+                        ) {
+                          // Switch to banner template - use original image
+                          form.setValue("photoUrl", originalPhoto);
+                          setPhotoPreview(originalPhoto);
+                          // Trigger update with original photo
+                          if (currentValues.name && currentValues.role) {
+                            stableOnSubmit(
+                              {
+                                photoUrl: originalPhoto,
+                                showPhoto: currentValues.showPhoto ?? true,
+                                name: currentValues.name,
+                                role: currentValues.role,
+                                phone: currentValues.phone || undefined,
+                                bookingLink:
+                                  currentValues.bookingLink || undefined,
+                                linkedinProfile:
+                                  currentValues.linkedinProfile || undefined,
+                              },
+                              newTemplateId
+                            );
+                          }
+                          return; // Early return since we've handled the update
+                        }
+                      }
+
+                      // Trigger immediate update when template changes
+                      if (currentValues.name && currentValues.role) {
+                        stableOnSubmit(
+                          {
+                            photoUrl: currentValues.photoUrl || "",
+                            showPhoto: currentValues.showPhoto ?? true,
+                            name: currentValues.name,
+                            role: currentValues.role,
+                            phone: currentValues.phone || undefined,
+                            bookingLink: currentValues.bookingLink || undefined,
+                            linkedinProfile:
+                              currentValues.linkedinProfile || undefined,
+                          },
+                          newTemplateId
+                        );
+                      }
+                    }}
+                  >
                     {templates.map((template) => (
                       <option key={template.id} value={template.id}>
                         {template.metadata.name}
@@ -234,7 +370,7 @@ export function EmailSignatureForm({
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
 
             <FormField
               control={form.control}
