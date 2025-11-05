@@ -61,10 +61,9 @@ function BannerTemplateRenderer({ data }: { data: EmailSignatureData }) {
                 <div className="flex items-center gap-1">
                   <div className="h-6 w-6 rounded-full bg-black flex items-center justify-center shrink-0">
                     <img
-                      src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png"
+                      src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone-white.png"
                       alt="Phone"
                       className="h-3 w-3"
-                      style={{ filter: "brightness(0) invert(1)" }}
                     />
                   </div>
                   <a
@@ -80,10 +79,9 @@ function BannerTemplateRenderer({ data }: { data: EmailSignatureData }) {
                 <div className="flex items-center gap-1">
                   <div className="h-6 w-6 rounded-full bg-black flex items-center justify-center shrink-0">
                     <img
-                      src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png"
+                      src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender-white.png"
                       alt="Calendar"
                       className="h-3 w-3"
-                      style={{ filter: "brightness(0) invert(1)" }}
                     />
                   </div>
                   <a
@@ -105,10 +103,9 @@ function BannerTemplateRenderer({ data }: { data: EmailSignatureData }) {
                 <div className="flex items-center gap-1">
                   <div className="h-6 w-6 rounded-full bg-black flex items-center justify-center shrink-0">
                     <img
-                      src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png"
+                      src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin-white.png"
                       alt="LinkedIn"
                       className="h-3 w-3"
-                      style={{ filter: "brightness(0) invert(1)" }}
                     />
                   </div>
                   <a
@@ -192,15 +189,15 @@ function generateHTML(data: EmailSignatureData): string {
       : "";
 
   const phoneHtml = data.phone
-    ? `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-right:12px;display:inline-table;vertical-align:middle"><tr><td style="width:24px;height:24px;background-color:#000000;border-radius:50%;padding:0;text-align:center;vertical-align:middle"><table cellpadding="0" cellspacing="0" width="100%" height="100%" style="border-collapse:collapse"><tr><td align="center" valign="middle" style="text-align:center;vertical-align:middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone.png" style="width:12px;height:12px;display:block;margin:0 auto;filter:brightness(0) invert(1)" /></td></tr></table></td><td style="padding-left:4px;vertical-align:middle"><a href="${phoneLink}" style="color:#1a1a2e;text-decoration:none;font-size:12px;font-weight:500;vertical-align:middle">${data.phone}</a></td></tr></table>`
+    ? `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-right:12px;display:inline-table;vertical-align:middle"><tr><td style="width:24px;height:24px;background-color:#000000;border-radius:50%;padding:0;text-align:center;vertical-align:middle"><table cellpadding="0" cellspacing="0" width="100%" height="100%" style="border-collapse:collapse"><tr><td align="center" valign="middle" style="text-align:center;vertical-align:middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/phone-white.png" style="width:12px;height:12px;display:block;margin:0 auto" /></td></tr></table></td><td style="padding-left:4px;vertical-align:middle"><a href="${phoneLink}" style="color:#1a1a2e;text-decoration:none;font-size:12px;font-weight:500;vertical-align:middle">${data.phone}</a></td></tr></table>`
     : "";
 
   const bookingHtml = data.bookingLink
-    ? `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-right:12px;display:inline-table;vertical-align:middle"><tr><td style="width:24px;height:24px;background-color:#000000;border-radius:50%;padding:0;text-align:center;vertical-align:middle"><table cellpadding="0" cellspacing="0" width="100%" height="100%" style="border-collapse:collapse"><tr><td align="center" valign="middle" style="text-align:center;vertical-align:middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender.png" style="width:12px;height:12px;display:block;margin:0 auto;filter:brightness(0) invert(1)" /></td></tr></table></td><td style="padding-left:4px;vertical-align:middle"><a href="${bookingHref}" target="_blank" style="color:#1a1a2e;text-decoration:none;font-size:12px;font-weight:500;vertical-align:middle">Book a Call</a></td></tr></table>`
+    ? `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-right:12px;display:inline-table;vertical-align:middle"><tr><td style="width:24px;height:24px;background-color:#000000;border-radius:50%;padding:0;text-align:center;vertical-align:middle"><table cellpadding="0" cellspacing="0" width="100%" height="100%" style="border-collapse:collapse"><tr><td align="center" valign="middle" style="text-align:center;vertical-align:middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/calender-white.png" style="width:12px;height:12px;display:block;margin:0 auto" /></td></tr></table></td><td style="padding-left:4px;vertical-align:middle"><a href="${bookingHref}" target="_blank" style="color:#1a1a2e;text-decoration:none;font-size:12px;font-weight:500;vertical-align:middle">Book a Call</a></td></tr></table>`
     : "";
 
   const linkedinHtml = data.linkedinProfile
-    ? `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;display:inline-table;vertical-align:middle"><tr><td style="width:24px;height:24px;background-color:#000000;border-radius:50%;padding:0;text-align:center;vertical-align:middle"><table cellpadding="0" cellspacing="0" width="100%" height="100%" style="border-collapse:collapse"><tr><td align="center" valign="middle" style="text-align:center;vertical-align:middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin.png" style="width:12px;height:12px;display:block;margin:0 auto;filter:brightness(0) invert(1)" /></td></tr></table></td><td style="padding-left:4px;vertical-align:middle"><a href="${linkedinHref}" target="_blank" style="color:#1a1a2e;text-decoration:none;font-size:12px;font-weight:500;vertical-align:middle">linkedin</a></td></tr></table>`
+    ? `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;display:inline-table;vertical-align:middle"><tr><td style="width:24px;height:24px;background-color:#000000;border-radius:50%;padding:0;text-align:center;vertical-align:middle"><table cellpadding="0" cellspacing="0" width="100%" height="100%" style="border-collapse:collapse"><tr><td align="center" valign="middle" style="text-align:center;vertical-align:middle"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/linkedin-white.png" style="width:12px;height:12px;display:block;margin:0 auto" /></td></tr></table></td><td style="padding-left:4px;vertical-align:middle"><a href="${linkedinHref}" target="_blank" style="color:#1a1a2e;text-decoration:none;font-size:12px;font-weight:500;vertical-align:middle">linkedin</a></td></tr></table>`
     : "";
 
   // Gradient separator - 4px height to match renderer
