@@ -37,6 +37,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate file size (2MB maximum)
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "File size must be less than 2MB" },
+        { status: 400 }
+      );
+    }
+
     // Convert File to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -73,4 +82,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

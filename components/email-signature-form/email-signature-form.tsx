@@ -86,6 +86,13 @@ export function EmailSignatureForm({
   ) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (2MB maximum)
+      const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+      if (file.size > MAX_FILE_SIZE) {
+        setCompositionError("File size must be less than 2MB");
+        return;
+      }
+
       const currentTemplateId = "banner"; // Always use banner template
       const shouldCompose = false; // Banner template doesn't need composition
 
@@ -481,7 +488,7 @@ export function EmailSignatureForm({
                   )}
                   {form.watch("showPhoto") !== false && (
                     <FormDescription>
-                      Upload a photo or provide an image URL
+                      Upload a photo or provide an image URL (max 2MB)
                     </FormDescription>
                   )}
                   <FormMessage />
