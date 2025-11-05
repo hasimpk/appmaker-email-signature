@@ -10,7 +10,7 @@ function BannerTemplateRenderer({ data }: { data: EmailSignatureData }) {
       style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
     >
       {/* Top Section */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 p-4">
+      <div className="flex flex-row flex-wrap items-center gap-4 p-4">
         {/* AppMaker Logo - Left Side */}
         <div className="flex items-center justify-center">
           <img
@@ -20,7 +20,7 @@ function BannerTemplateRenderer({ data }: { data: EmailSignatureData }) {
           />
         </div>
 
-        <div className="sm:border-l sm:border-gray-200 sm:pl-4">
+        <div className="border-l border-gray-200 pl-4">
           {/* Profile Card - Right Side */}
           <div className="flex-1 w-full">
             {/* First Row: Image, Name, Role */}
@@ -45,11 +45,11 @@ function BannerTemplateRenderer({ data }: { data: EmailSignatureData }) {
               )}
 
               {/* Name and Role - Stacked */}
-              <div className="flex flex-col">
-                <h2 className="text-lg sm:text-xl font-medium text-[#1a1a2e]">
+              <div className="flex flex-col min-w-0">
+                <h2 className="text-lg sm:text-xl font-medium text-[#1a1a2e] leading-tight wrap-break-word">
                   {data.name}
                 </h2>
-                <p className="text-sm sm:text-md font-medium text-gray-500">
+                <p className="text-sm sm:text-md font-medium text-gray-500 leading-tight wrap-break-word">
                   {data.role}
                 </p>
               </div>
@@ -245,10 +245,10 @@ function generateHTML(data: EmailSignatureData): string {
             <td align="center" valign="middle" style="padding-left:16px">
               <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%">
                 <tr>
-                  <td style="padding:0 8px;border-right:1px solid #e5e7eb;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png" style="height:20px;vertical-align:middle" /></td>
-                  <td style="padding:0 8px;border-right:1px solid #e5e7eb;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey-1.png" style="height:20px;vertical-align:middle" /></td>
-                  <td style="padding:0 8px;border-right:1px solid #e5e7eb;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png" style="height:20px;vertical-align:middle" /></td>
-                  <td style="padding:0 8px;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png" style="height:20px;vertical-align:middle" /></td>
+                  <td style="padding:0 8px;border-right:1px solid #e5e7eb;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/Levis.png" style="height:20px;vertical-align:middle;object-fit:contain" /></td>
+                  <td style="padding:0 8px;border-right:1px solid #e5e7eb;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/jockey-1.png" style="height:20px;vertical-align:middle;object-fit:contain" /></td>
+                  <td style="padding:0 8px;border-right:1px solid #e5e7eb;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/gnc.png" style="height:20px;vertical-align:middle;object-fit:contain" /></td>
+                  <td style="padding:0 8px;vertical-align:middle;text-align:center"><img src="https://cms-frontend-api.appmaker.xyz/api/media/file/greenworks.png" style="height:20px;vertical-align:middle;object-fit:contain" /></td>
                 </tr>
               </table>
             </td>
