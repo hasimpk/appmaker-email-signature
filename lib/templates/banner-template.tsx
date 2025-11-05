@@ -10,9 +10,9 @@ function BannerTemplateRenderer({ data }: { data: EmailSignatureData }) {
       style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
     >
       {/* Top Section */}
-      <div className="flex flex-row flex-wrap items-center gap-4 p-4">
+      <div className="flex flex-row flex-wrap items-start gap-4 p-4">
         {/* AppMaker Logo - Left Side */}
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center mt-4">
           <img
             src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png"
             alt="AppMaker"
@@ -206,8 +206,8 @@ function generateHTML(data: EmailSignatureData): string {
       <td style="padding:16px">
         <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
           <tr>
-            <td width="auto" align="center" valign="middle" style="padding-right:16px;vertical-align:middle;text-align:center">
-              <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" style="height:24px;vertical-align:middle;object-fit:contain;display:block;margin:0 auto" />
+            <td width="auto" align="center" valign="middle" style="padding-right:16px;vertical-align:top;text-align:center">
+              <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" style="height:24px;vertical-align:middle;object-fit:contain;display:block;margin:16px auto" />
             </td>
             <td width="1" style="padding-left:16px;border-left:1px solid #e5e7eb;vertical-align:middle"></td>
             <td valign="middle" style="vertical-align:middle">
