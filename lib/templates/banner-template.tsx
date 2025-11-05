@@ -216,7 +216,7 @@ function generateHTML(data: EmailSignatureData): string {
         <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
           <tr>
             <td width="auto" valign="middle" style="padding-right:16px;vertical-align:middle">
-              <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" style="height:24px;vertical-align:middle" />
+              <img src="https://cms-frontend-api.appmaker.xyz/api/media/file/appmaker-logo.png" style="height:24px;vertical-align:middle;width:100%;object-fit:contain" />
             </td>
             <td width="1" style="padding-left:16px;border-left:1px solid #e5e7eb;vertical-align:middle"></td>
             <td valign="middle" style="vertical-align:middle">
