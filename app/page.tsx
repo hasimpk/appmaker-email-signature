@@ -213,13 +213,9 @@ export default function Home() {
                 <CardAction>
                   <Sheet>
                     <SheetTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        className="h-8 w-8"
-                      >
+                      <Button variant="ghost">
                         <Info className="h-4 w-4" />
-                        <span className="sr-only">Show Gmail instructions</span>
+                        <span>Instructions</span>
                       </Button>
                     </SheetTrigger>
                     <SheetContent side="right" className="w-full sm:max-w-lg">

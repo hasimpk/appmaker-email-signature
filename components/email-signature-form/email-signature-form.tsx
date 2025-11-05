@@ -284,11 +284,15 @@ export function EmailSignatureForm({
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        const newTemplateId = e.target.value || defaultTemplateId;
+                        const newTemplateId =
+                          e.target.value || defaultTemplateId;
                         const currentValues = form.getValues();
 
                         // If switching templates and we have an original photo, reprocess it
-                        if (originalPhotoRef.current && currentValues.photoUrl) {
+                        if (
+                          originalPhotoRef.current &&
+                          currentValues.photoUrl
+                        ) {
                           const shouldCompose = newTemplateId === "default";
                           const originalPhoto = originalPhotoRef.current;
 
@@ -309,7 +313,8 @@ export function EmailSignatureForm({
                                   stableOnSubmit(
                                     {
                                       photoUrl: composite,
-                                      showPhoto: updatedValues.showPhoto ?? true,
+                                      showPhoto:
+                                        updatedValues.showPhoto ?? true,
                                       name: updatedValues.name,
                                       role: updatedValues.role,
                                       phone: updatedValues.phone || undefined,
@@ -324,7 +329,10 @@ export function EmailSignatureForm({
                                 }
                               })
                               .catch((error) => {
-                                console.error("Error creating composite:", error);
+                                console.error(
+                                  "Error creating composite:",
+                                  error
+                                );
                                 // Fallback to original
                                 form.setValue("photoUrl", originalPhoto);
                                 setPhotoPreview(originalPhoto);
@@ -367,7 +375,8 @@ export function EmailSignatureForm({
                               name: currentValues.name,
                               role: currentValues.role,
                               phone: currentValues.phone || undefined,
-                              bookingLink: currentValues.bookingLink || undefined,
+                              bookingLink:
+                                currentValues.bookingLink || undefined,
                               linkedinProfile:
                                 currentValues.linkedinProfile || undefined,
                             },
