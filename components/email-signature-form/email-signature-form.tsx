@@ -70,7 +70,7 @@ export function EmailSignatureForm({
   const form = useForm<EmailSignatureFormData>({
     resolver: zodResolver(emailSignatureSchema),
     defaultValues: {
-      templateId: defaultTemplateId,
+      templateId: "banner", // Always use banner template
       photoUrl: defaultValues?.photoUrl || "",
       showPhoto: defaultValues?.showPhoto ?? true,
       name: defaultValues?.name || "",
@@ -86,9 +86,8 @@ export function EmailSignatureForm({
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      const currentTemplateId =
-        form.getValues("templateId") || defaultTemplateId;
-      const shouldCompose = currentTemplateId === "default";
+      const currentTemplateId = "banner"; // Always use banner template
+      const shouldCompose = false; // Banner template doesn't need composition
 
       setIsComposing(true);
       setCompositionError(null);
@@ -165,7 +164,7 @@ export function EmailSignatureForm({
         bookingLink: data.bookingLink,
         linkedinProfile: data.linkedinProfile,
       },
-      data.templateId || defaultTemplateId
+      "banner" // Always use banner template
     );
   });
 
@@ -193,9 +192,8 @@ export function EmailSignatureForm({
           trimmedUrl.startsWith("https://") ||
           trimmedUrl.startsWith("data:")
         ) {
-          const currentTemplateId =
-            form.getValues("templateId") || defaultTemplateId;
-          const shouldCompose = currentTemplateId === "default";
+          const currentTemplateId = "banner"; // Always use banner template
+          const shouldCompose = false; // Banner template doesn't need composition
 
           setIsComposing(shouldCompose);
           setCompositionError(null);
@@ -231,7 +229,7 @@ export function EmailSignatureForm({
         }
       }
     },
-    [form, defaultTemplateId]
+    [form]
   );
 
   // Cleanup timeout on unmount
@@ -256,12 +254,12 @@ export function EmailSignatureForm({
             bookingLink: value.bookingLink || undefined,
             linkedinProfile: value.linkedinProfile || undefined,
           },
-          value.templateId || defaultTemplateId
+          "banner" // Always use banner template
         );
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, stableOnSubmit, defaultTemplateId]);
+  }, [form, stableOnSubmit]);
 
   return (
     <Card>
@@ -274,121 +272,124 @@ export function EmailSignatureForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="templateId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Template</FormLabel>
-                  <Select
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      const newTemplateId = e.target.value || defaultTemplateId;
-                      const currentValues = form.getValues();
+            {/* Template selector hidden - using banner template as default */}
+            {false && (
+              <FormField
+                control={form.control}
+                name="templateId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Template</FormLabel>
+                    <Select
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        const newTemplateId = e.target.value || defaultTemplateId;
+                        const currentValues = form.getValues();
 
-                      // If switching templates and we have an original photo, reprocess it
-                      if (originalPhotoRef.current && currentValues.photoUrl) {
-                        const shouldCompose = newTemplateId === "default";
-                        const originalPhoto = originalPhotoRef.current;
+                        // If switching templates and we have an original photo, reprocess it
+                        if (originalPhotoRef.current && currentValues.photoUrl) {
+                          const shouldCompose = newTemplateId === "default";
+                          const originalPhoto = originalPhotoRef.current;
 
-                        if (
-                          shouldCompose &&
-                          !currentValues.photoUrl.startsWith("data:image/png")
-                        ) {
-                          // Switch to default template - need to create composite
-                          setIsComposing(true);
-                          compositeProfilePhoto(originalPhoto)
-                            .then((composite) => {
-                              form.setValue("photoUrl", composite);
-                              setPhotoPreview(composite);
-                              setIsComposing(false);
-                              // Trigger update with new composite
-                              const updatedValues = form.getValues();
-                              if (updatedValues.name && updatedValues.role) {
-                                stableOnSubmit(
-                                  {
-                                    photoUrl: composite,
-                                    showPhoto: updatedValues.showPhoto ?? true,
-                                    name: updatedValues.name,
-                                    role: updatedValues.role,
-                                    phone: updatedValues.phone || undefined,
-                                    bookingLink:
-                                      updatedValues.bookingLink || undefined,
-                                    linkedinProfile:
-                                      updatedValues.linkedinProfile ||
-                                      undefined,
-                                  },
-                                  newTemplateId
-                                );
-                              }
-                            })
-                            .catch((error) => {
-                              console.error("Error creating composite:", error);
-                              // Fallback to original
-                              form.setValue("photoUrl", originalPhoto);
-                              setPhotoPreview(originalPhoto);
-                              setIsComposing(false);
-                            });
-                        } else if (
-                          !shouldCompose &&
-                          currentValues.photoUrl.startsWith("data:image/png")
-                        ) {
-                          // Switch to banner template - use original image
-                          form.setValue("photoUrl", originalPhoto);
-                          setPhotoPreview(originalPhoto);
-                          // Trigger update with original photo
-                          if (currentValues.name && currentValues.role) {
-                            stableOnSubmit(
-                              {
-                                photoUrl: originalPhoto,
-                                showPhoto: currentValues.showPhoto ?? true,
-                                name: currentValues.name,
-                                role: currentValues.role,
-                                phone: currentValues.phone || undefined,
-                                bookingLink:
-                                  currentValues.bookingLink || undefined,
-                                linkedinProfile:
-                                  currentValues.linkedinProfile || undefined,
-                              },
-                              newTemplateId
-                            );
+                          if (
+                            shouldCompose &&
+                            !currentValues.photoUrl.startsWith("data:image/png")
+                          ) {
+                            // Switch to default template - need to create composite
+                            setIsComposing(true);
+                            compositeProfilePhoto(originalPhoto)
+                              .then((composite) => {
+                                form.setValue("photoUrl", composite);
+                                setPhotoPreview(composite);
+                                setIsComposing(false);
+                                // Trigger update with new composite
+                                const updatedValues = form.getValues();
+                                if (updatedValues.name && updatedValues.role) {
+                                  stableOnSubmit(
+                                    {
+                                      photoUrl: composite,
+                                      showPhoto: updatedValues.showPhoto ?? true,
+                                      name: updatedValues.name,
+                                      role: updatedValues.role,
+                                      phone: updatedValues.phone || undefined,
+                                      bookingLink:
+                                        updatedValues.bookingLink || undefined,
+                                      linkedinProfile:
+                                        updatedValues.linkedinProfile ||
+                                        undefined,
+                                    },
+                                    newTemplateId
+                                  );
+                                }
+                              })
+                              .catch((error) => {
+                                console.error("Error creating composite:", error);
+                                // Fallback to original
+                                form.setValue("photoUrl", originalPhoto);
+                                setPhotoPreview(originalPhoto);
+                                setIsComposing(false);
+                              });
+                          } else if (
+                            !shouldCompose &&
+                            currentValues.photoUrl.startsWith("data:image/png")
+                          ) {
+                            // Switch to banner template - use original image
+                            form.setValue("photoUrl", originalPhoto);
+                            setPhotoPreview(originalPhoto);
+                            // Trigger update with original photo
+                            if (currentValues.name && currentValues.role) {
+                              stableOnSubmit(
+                                {
+                                  photoUrl: originalPhoto,
+                                  showPhoto: currentValues.showPhoto ?? true,
+                                  name: currentValues.name,
+                                  role: currentValues.role,
+                                  phone: currentValues.phone || undefined,
+                                  bookingLink:
+                                    currentValues.bookingLink || undefined,
+                                  linkedinProfile:
+                                    currentValues.linkedinProfile || undefined,
+                                },
+                                newTemplateId
+                              );
+                            }
+                            return; // Early return since we've handled the update
                           }
-                          return; // Early return since we've handled the update
                         }
-                      }
 
-                      // Trigger immediate update when template changes
-                      if (currentValues.name && currentValues.role) {
-                        stableOnSubmit(
-                          {
-                            photoUrl: currentValues.photoUrl || "",
-                            showPhoto: currentValues.showPhoto ?? true,
-                            name: currentValues.name,
-                            role: currentValues.role,
-                            phone: currentValues.phone || undefined,
-                            bookingLink: currentValues.bookingLink || undefined,
-                            linkedinProfile:
-                              currentValues.linkedinProfile || undefined,
-                          },
-                          newTemplateId
-                        );
-                      }
-                    }}
-                  >
-                    {templates.map((template) => (
-                      <option key={template.id} value={template.id}>
-                        {template.metadata.name}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormDescription>
-                    Choose a template for your email signature
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                        // Trigger immediate update when template changes
+                        if (currentValues.name && currentValues.role) {
+                          stableOnSubmit(
+                            {
+                              photoUrl: currentValues.photoUrl || "",
+                              showPhoto: currentValues.showPhoto ?? true,
+                              name: currentValues.name,
+                              role: currentValues.role,
+                              phone: currentValues.phone || undefined,
+                              bookingLink: currentValues.bookingLink || undefined,
+                              linkedinProfile:
+                                currentValues.linkedinProfile || undefined,
+                            },
+                            newTemplateId
+                          );
+                        }
+                      }}
+                    >
+                      {templates.map((template) => (
+                        <option key={template.id} value={template.id}>
+                          {template.metadata.name}
+                        </option>
+                      ))}
+                    </Select>
+                    <FormDescription>
+                      Choose a template for your email signature
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
