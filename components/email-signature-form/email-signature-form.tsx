@@ -90,47 +90,65 @@ export function EmailSignatureForm({
         form.getValues("templateId") || defaultTemplateId;
       const shouldCompose = currentTemplateId === "default";
 
-      setIsComposing(shouldCompose);
+      setIsComposing(true);
       setCompositionError(null);
 
       try {
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          try {
-            const result = reader.result as string;
-            // Store original image
-            originalPhotoRef.current = result;
+        // Upload to CDN
+        const formData = new FormData();
+        formData.append("file", file);
 
-            if (shouldCompose) {
-              // Create composite image only for default template
-              const composite = await compositeProfilePhoto(result);
-              setPhotoPreview(composite);
-              form.setValue("photoUrl", composite);
-            } else {
-              // Use original image for other templates (like banner)
-              setPhotoPreview(result);
-              form.setValue("photoUrl", result);
-            }
-          } catch (error) {
-            console.error("Error processing image:", error);
-            setCompositionError(
-              error instanceof Error ? error.message : "Failed to process image"
-            );
-            // Fallback to original image if processing fails
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to upload image to CDN");
+        }
+
+        const { url } = await response.json();
+
+        if (!url) {
+          throw new Error("No URL returned from upload");
+        }
+
+        // Store original CDN URL
+        originalPhotoRef.current = url;
+
+        if (shouldCompose) {
+          // Create composite image only for default template
+          const composite = await compositeProfilePhoto(url);
+          setPhotoPreview(composite);
+          form.setValue("photoUrl", composite);
+        } else {
+          // Use CDN URL for other templates (like banner)
+          setPhotoPreview(url);
+          form.setValue("photoUrl", url);
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setCompositionError(
+          error instanceof Error ? error.message : "Failed to upload image"
+        );
+        // On error, fallback to data URL for immediate preview
+        try {
+          const reader = new FileReader();
+          reader.onloadend = () => {
             const result = reader.result as string;
             setPhotoPreview(result);
             form.setValue("photoUrl", result);
-          } finally {
             setIsComposing(false);
-          }
-        };
-        reader.onerror = () => {
-          setCompositionError("Failed to read file");
+          };
+          reader.onerror = () => {
+            setIsComposing(false);
+          };
+          reader.readAsDataURL(file);
+        } catch {
           setIsComposing(false);
-        };
-        reader.readAsDataURL(file);
-      } catch {
-        setCompositionError("Failed to process file");
+        }
+      } finally {
         setIsComposing(false);
       }
     }
