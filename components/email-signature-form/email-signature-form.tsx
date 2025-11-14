@@ -488,7 +488,8 @@ export function EmailSignatureForm({
                   )}
                   {form.watch("showPhoto") !== false && (
                     <FormDescription>
-                      Upload a photo or provide an image URL (max 2MB)
+                      Upload a photo or provide an image URL (max 2MB, square
+                      aspect ratio)
                     </FormDescription>
                   )}
                   <FormMessage />
